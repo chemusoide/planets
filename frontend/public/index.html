@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planetas para peques y curiosos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css?v=20260402c" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy panel panel-soft">
+          <div class="eyebrow">Sistema solar para peques y curiosos</div>
+          <h1>Descubre los planetas y, si quieres, mira también cómo funciona la tecnología.</h1>
+          <p class="lead">
+            La parte principal está pensada para niños: explorar, leer curiosidades y comparar
+            mundos. El modo técnico queda escondido y explica de forma sencilla cómo viaja una
+            petición desde el navegador hasta el backend.
+          </p>
+          <div class="hero-actions">
+            <span id="api-status" class="badge badge-waiting">Conectando con la misión espacial</span>
+            <button id="refresh-list" class="secondary-button">Recargar planetas</button>
+            <button id="toggle-tech" class="secondary-button secondary-button-alt" aria-expanded="false">
+              Abrir modo técnico
+            </button>
+          </div>
+        </div>
+
+        <section class="hero-visual panel">
+          <div class="hero-cosmos">
+            <div class="orbit-ring orbit-ring-1"></div>
+            <div class="orbit-ring orbit-ring-2"></div>
+            <div class="sun-core"></div>
+          </div>
+          <div class="hero-metrics">
+            <article>
+              <span class="metric-label">Mundos cargados</span>
+              <strong id="planet-count">0</strong>
+            </article>
+            <article>
+              <span class="metric-label">Planeta destacado</span>
+              <strong id="selected-planet">Nada seleccionado</strong>
+            </article>
+          </div>
+        </section>
+      </header>
+
+      <main class="main-layout">
+        <section class="main-content">
+          <article class="panel spotlight-card">
+            <div class="card-header card-header-stack">
+              <div>
+                <div class="eyebrow">Panel principal</div>
+                <h2>Planeta protagonista</h2>
+              </div>
+              <div id="planet-summary-chip" class="summary-chip">Listo para explorar</div>
+            </div>
+            <div id="planet-detail" class="planet-spotlight empty-state">
+              Selecciona un planeta para ver su historia, datos clave y una curiosidad divertida.
+            </div>
+          </article>
+
+          <article class="panel list-card">
+            <div class="card-header card-header-stack">
+              <div>
+                <div class="eyebrow">Exploración guiada</div>
+                <h2>Elige un planeta</h2>
+              </div>
+              <p class="helper-text">Pulsa una tarjeta para cambiar el planeta protagonista.</p>
+            </div>
+            <div id="category-filters" class="filter-row" role="tablist" aria-label="Categorías de planetas">
+              <button class="filter-pill is-active" type="button" data-category="all">Todos</button>
+              <button class="filter-pill" type="button" data-category="solar-system">Sistema solar</button>
+              <button class="filter-pill" type="button" data-category="exoplanets">Fuera del sistema solar</button>
+            </div>
+            <ul id="planet-list" class="planet-grid"></ul>
+          </article>
+        </section>
+
+        <aside class="sidebar-stack">
+          <article class="panel mini-panel">
+            <div class="eyebrow">Curiosidad rápida</div>
+            <h2>Dato curioso</h2>
+            <p id="random-fact" class="sidebar-text">
+              Estamos esperando a que llegue la primera cápsula de datos desde el backend.
+            </p>
+          </article>
+
+          <article class="panel mini-panel">
+            <div class="eyebrow">Comparación sencilla</div>
+            <h2>Ficha express</h2>
+            <dl id="planet-quick-stats" class="stats-list">
+              <div>
+                <dt>Lunas</dt>
+                <dd>--</dd>
+              </div>
+              <div>
+                <dt>Duración</dt>
+                <dd>--</dd>
+              </div>
+              <div>
+                <dt>Distancia</dt>
+                <dd>--</dd>
+              </div>
+            </dl>
+            <p id="quick-stats-note" class="helper-text">Cambia de categoría para comparar planetas del sistema solar y exoplanetas.</p>
+          </article>
+        </aside>
+      </main>
+
+      <section id="tech-panel" class="tech-panel panel is-collapsed" aria-hidden="true">
+        <div class="tech-header">
+          <div>
+            <div class="eyebrow">Modo técnico</div>
+            <h2>Cómo viaja una petición por el sistema</h2>
+            <p class="helper-text">
+              Aquí se explica el recorrido navegador → Nginx → FastAPI → SQLite → respuesta JSON.
+            </p>
+          </div>
+          <button id="toggle-tech-close" class="secondary-button">Cerrar</button>
+        </div>
+
+        <div class="tech-layout">
+          <div class="tech-column">
+            <article class="step-card">
+              <span class="step-index">1</span>
+              <div>
+                <h3>Navegador</h3>
+                <p id="step-browser">Todavía no se ha lanzado ninguna petición.</p>
+              </div>
+            </article>
+            <article class="step-card">
+              <span class="step-index">2</span>
+              <div>
+                <h3>Proxy web</h3>
+                <p id="step-proxy">Nginx recibirá la ruta /api y la enviará al backend interno.</p>
+              </div>
+            </article>
+            <article class="step-card">
+              <span class="step-index">3</span>
+              <div>
+                <h3>Backend FastAPI</h3>
+                <p id="step-backend">La API procesará la ruta y pedirá datos al servicio de planetas.</p>
+              </div>
+            </article>
+            <article class="step-card">
+              <span class="step-index">4</span>
+              <div>
+                <h3>Persistencia SQLite</h3>
+                <p id="step-storage">La base de datos leerá los planetas guardados en el volumen persistente.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="tech-column">
+            <article class="debug-block debug-summary">
+              <div class="summary-grid">
+                <div>
+                  <span class="meta-label">Request id</span>
+                  <strong id="request-id">Pendiente</strong>
+                </div>
+                <div>
+                  <span class="meta-label">Estado HTTP</span>
+                  <strong id="response-status">Pendiente</strong>
+                </div>
+                <div>
+                  <span class="meta-label">Tiempo</span>
+                  <strong id="response-time">Pendiente</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="debug-block">
+              <div class="block-header">
+                <div>
+                  <h3>Estado de sincronización</h3>
+                  <p class="helper-text">La app consulta una fuente externa, actualiza SQLite y luego sirve desde caché local.</p>
+                </div>
+                <button id="sync-now" class="secondary-button">Sincronizar ahora</button>
+              </div>
+              <dl class="admin-stats">
+                <div>
+                  <dt>Fuente</dt>
+                  <dd id="sync-source-name">Pendiente</dd>
+                </div>
+                <div>
+                  <dt>Estado</dt>
+                  <dd id="sync-status-label">Pendiente</dd>
+                </div>
+                <div>
+                  <dt>Último éxito</dt>
+                  <dd id="sync-last-success">Pendiente</dd>
+                </div>
+                <div>
+                  <dt>Modo actual</dt>
+                  <dd id="sync-cache-mode">Pendiente</dd>
+                </div>
+              </dl>
+              <p id="sync-message" class="sidebar-text">Esperando estado de sincronización.</p>
+            </article>
+
+            <article class="debug-block">
+              <h3>Logs recientes del backend</h3>
+              <ul id="logs-list" class="logs-list">
+                <li>Los logs aparecerán aquí después de la primera petición.</li>
+              </ul>
+            </article>
+
+            <article class="debug-block">
+              <h3>Request real</h3>
+              <pre id="request-view">Todavía no se ha lanzado ninguna petición.</pre>
+            </article>
+
+            <article class="debug-block">
+              <h3>Response real</h3>
+              <pre id="response-view">Todavía no se ha recibido ninguna respuesta.</pre>
+            </article>
+
+            <article class="debug-block">
+              <h3>Arquitectura del proyecto</h3>
+              <ul id="architecture-list" class="architecture-list">
+                <li>La arquitectura aparecerá aquí cuando el panel técnico cargue.</li>
+              </ul>
+            </article>
+
+            <article class="debug-block">
+              <h3>Flujo resumido del proyecto</h3>
+              <ol id="project-flow-list" class="flow-list">
+                <li>El flujo aparecerá aquí cuando el panel técnico cargue.</li>
+              </ol>
+            </article>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="./app.js?v=20260402c" defer></script>
+  </body>
+</html>
